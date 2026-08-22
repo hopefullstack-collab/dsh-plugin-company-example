@@ -1,1 +1,1 @@
-{"version":3,"file":"client.js","names":[],"sources":["../src/identity.ts"],"sourcesContent":["export const EXAMPLE_COMPANY_IDENTITY = Object.freeze({ displayName: 'Example Company' })\n"],"mappings":"AAAA"}
+/tmp/map_content_only.txt
