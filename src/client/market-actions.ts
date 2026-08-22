@@ -1,5 +1,6 @@
 /**
- * Market + Company Pack HTTP helpers used by the company Settings hub.
+ * Plugin market HTTP helpers for the Example Company Settings hub.
+ * Works on standard DSH Desktop with dsh-community-market composed into the profile.
  * Catalog selection prefers company-1024store, then falls back to dsh-1024store.
  */
 
@@ -12,6 +13,7 @@ import {
   type CatalogSourceView,
 } from '../catalog.ts'
 import {
+  COMPANY_PACK_RECOMMENDED_ENTRY,
   findCatalogItemForPackage,
   isRecommendedPackage,
   recommendedPackageInstalled,
@@ -206,63 +208,18 @@ export async function requestRestart(
   }))
 }
 
-export interface CompanyPackPreview {
-  readonly enabled: boolean
-  readonly packageName: string
-  readonly displayName: string
-  readonly plan: {
-    readonly entries: readonly {
-      readonly packageName: string
-      readonly displayName: string
-      readonly kind: 'pack' | 'company-child' | 'community'
-    }[]
-  }
-}
-
-export async function readCompanyPackPreview(signal?: AbortSignal): Promise<CompanyPackPreview> {
-  return await readJson(await fetch('/api/desktop/company-pack', {
-    cache: 'no-store',
-    ...(signal === undefined ? {} : { signal }),
-  }))
-}
-
-export async function confirmCompanyPackInstall(signal?: AbortSignal): Promise<{
-  readonly ok: true
-  readonly packEnabled: boolean
-}> {
-  return await readJson(await fetch('/api/desktop/company-pack/confirm', {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ confirmed: true, communityTargets: [] }),
-    ...(signal === undefined ? {} : { signal }),
-  }))
-}
-
+/** Install the optional Company Pack through Plugin market (no desktop-specific API). */
 export async function installCompanyPackWithCascade(signal?: AbortSignal): Promise<{
   readonly packEnabled: boolean
   readonly results: readonly InstallResult[]
   readonly restartToken?: string
 }> {
-  const preview = await readCompanyPackPreview(signal)
-  if (!preview.enabled) {
-    await confirmCompanyPackInstall(signal)
-  }
-  const communityNames = preview.plan.entries
-    .filter(entry => entry.kind === 'community')
-    .map(entry => entry.packageName)
-  if (communityNames.length === 0) {
-    return {
-      packEnabled: true,
-      results: [{ packageName: preview.packageName, status: 'installed' }],
-    }
-  }
-  const outcome = await installRecommendedPlugins(communityNames, signal)
+  const outcome = await installRecommendedPlugins([COMPANY_PACK_RECOMMENDED_ENTRY.packageName], signal)
+  const packResult = outcome.results.find(result => result.packageName === COMPANY_PACK_RECOMMENDED_ENTRY.packageName)
+  const packEnabled = packResult?.status === 'installed' || packResult?.status === 'already'
   return {
-    packEnabled: true,
-    results: [
-      { packageName: preview.packageName, status: preview.enabled ? 'already' : 'installed' },
-      ...outcome.results,
-    ],
+    packEnabled,
+    results: outcome.results,
     ...(outcome.restartToken === undefined ? {} : { restartToken: outcome.restartToken }),
   }
 }

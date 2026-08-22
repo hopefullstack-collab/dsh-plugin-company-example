@@ -1,9 +1,14 @@
 import { useEffect, useState, type ReactNode } from 'react'
-import { COMPANY_PACK_RECOMMENDED_ENTRY, summarizeInstallResults } from '../recommendations.ts'
+import {
+  buildCompanyPackConfirmEntries,
+  COMPANY_PACK_RECOMMENDED_ENTRY,
+  recommendedPackageInstalled,
+  summarizeInstallResults,
+} from '../recommendations.ts'
 import type { CompanyLocaleKey } from './locales.ts'
 import {
   installCompanyPackWithCascade,
-  readCompanyPackPreview,
+  readInstallations,
   requestRestart,
 } from './market-actions.ts'
 import { RecommendedPluginCard } from './RecommendedPluginCard.tsx'
@@ -13,7 +18,7 @@ type InstallState =
   | { readonly status: 'busy' }
   | {
     readonly status: 'confirm-company-pack'
-    readonly entries: readonly { readonly packageName: string; readonly displayName: string; readonly kind: string }[]
+    readonly entries: ReturnType<typeof buildCompanyPackConfirmEntries>
   }
   | { readonly status: 'done'; readonly tone: 'ok' | 'error'; readonly message: CompanyLocaleKey; readonly restartToken?: string }
 
@@ -27,23 +32,22 @@ export function CompanyEnterprisePage({
 
   useEffect(() => {
     const controller = new AbortController()
-    void readCompanyPackPreview(controller.signal).then(
-      (preview) => { setCompanyPackEnabled(preview.enabled) },
+    void readInstallations(controller.signal).then(
+      (installations) => {
+        setCompanyPackEnabled(
+          recommendedPackageInstalled(COMPANY_PACK_RECOMMENDED_ENTRY.packageName, installations),
+        )
+      },
       () => undefined,
     )
     return () => controller.abort()
   }, [])
 
   const beginCompanyPackConfirm = (): void => {
-    void readCompanyPackPreview().then(
-      (preview) => {
-        setInstall({
-          status: 'confirm-company-pack',
-          entries: preview.plan.entries,
-        })
-      },
-      () => { setInstall({ status: 'done', tone: 'error', message: 'installError' }) },
-    )
+    setInstall({
+      status: 'confirm-company-pack',
+      entries: buildCompanyPackConfirmEntries(),
+    })
   }
 
   const confirmCompanyPack = (): void => {
