@@ -9,23 +9,23 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      - name: Concatenate parts into lib/client.js
+      - name: Concatenate parts into lib/client.js and lib/client.js.map
         run: |
           set -euo pipefail
-          ls -la lib/client.part.*.js
           cat lib/client.part.00.js lib/client.part.01.js lib/client.part.02.js lib/client.part.03.js lib/client.part.04.js lib/client.part.05.js lib/client.part.06.js lib/client.part.07.js lib/client.part.08.js lib/client.part.09.js lib/client.part.10.js lib/client.part.11.js lib/client.part.12.js lib/client.part.13.js > lib/client.js
-          wc -c lib/client.js
           test "$(wc -c < lib/client.js)" -eq 47472
-          head -c 40 lib/client.js; echo
-          tail -c 40 lib/client.js; echo
+          if compgen -G 'lib/client.js.map.part.*' > /dev/null; then
+            cat lib/client.js.map.part.00 lib/client.js.map.part.01 lib/client.js.map.part.02 lib/client.js.map.part.03 lib/client.js.map.part.04 lib/client.js.map.part.05 lib/client.js.map.part.06 lib/client.js.map.part.07 lib/client.js.map.part.08 lib/client.js.map.part.09 lib/client.js.map.part.10 lib/client.js.map.part.11 lib/client.js.map.part.12 lib/client.js.map.part.13 lib/client.js.map.part.14 lib/client.js.map.part.15 lib/client.js.map.part.16 lib/client.js.map.part.17 lib/client.js.map.part.18 lib/client.js.map.part.19 lib/client.js.map.part.20 lib/client.js.map.part.21 > lib/client.js.map
+            test "$(wc -c < lib/client.js.map)" -eq 70798
+          fi
       - name: Commit if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add lib/client.js
+          git add lib/client.js lib/client.js.map || true
           if git diff --cached --quiet; then
-            echo "lib/client.js unchanged"
+            echo "no assemble changes"
           else
-            git commit -m "Assemble lib/client.js from parts"
+            git commit -m "Assemble lib/client.js and lib/client.js.map from parts"
             git push
           fi
