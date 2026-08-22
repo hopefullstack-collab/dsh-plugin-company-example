@@ -1,0 +1,5 @@
+# Example company sub-plugin. Desktop always inserts this row so the client
+# Settings hub is reachable before Company Pack confirm.
+- insert:
+    - id: company-example
+      name: dsh-plugin-company-example
