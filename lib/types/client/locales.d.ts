@@ -39,6 +39,8 @@ export declare const zh: {
     readonly installOfficeIm: "一键安装推荐办公 IM";
     readonly installLater: "安装窄屏适配";
     readonly installPlugin: "安装";
+    readonly sourceFeatured: "来源：精选推荐";
+    readonly sourceEnterprise: "来源：企业内部";
     readonly installing: "正在安装…";
     readonly installed: "已安装";
     readonly installBusy: "正在通过插件市场安装推荐包…";
@@ -96,6 +98,8 @@ export declare const en: {
     readonly installOfficeIm: "Install recommended office IM";
     readonly installLater: "Install the narrow-screen adapter";
     readonly installPlugin: "Install";
+    readonly sourceFeatured: "Source: Featured";
+    readonly sourceEnterprise: "Source: Enterprise";
     readonly installing: "Installing…";
     readonly installed: "Installed";
     readonly installBusy: "Installing recommended packages through Plugin market…";
