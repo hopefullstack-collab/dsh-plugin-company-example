@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'lib/client.chunk.*.js'
+      - 'lib/client.part.*.js'
 jobs:
   assemble:
     runs-on: ubuntu-latest
@@ -11,14 +11,16 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      - name: Concatenate chunks into lib/client.js
+      - name: Concatenate parts into lib/client.js
         run: |
-          cat lib/client.chunk.0.js lib/client.chunk.1.js lib/client.chunk.2.js lib/client.chunk.3.js lib/client.chunk.4.js lib/client.chunk.5.js > lib/client.js
+          cat lib/client.part.00.js lib/client.part.01.js lib/client.part.02.js lib/client.part.03.js lib/client.part.04.js lib/client.part.05.js lib/client.part.06.js lib/client.part.07.js lib/client.part.08.js lib/client.part.09.js lib/client.part.10.js lib/client.part.11.js lib/client.part.12.js lib/client.part.13.js > lib/client.js
           wc -c lib/client.js
+          # verify against expected size
+          test $(wc -c < lib/client.js) -eq 47472
       - name: Commit if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add lib/client.js
-          git diff --cached --quiet || git commit -m "Assemble lib/client.js from chunks"
+          git diff --cached --quiet || git commit -m "Assemble lib/client.js from parts"
           git push
