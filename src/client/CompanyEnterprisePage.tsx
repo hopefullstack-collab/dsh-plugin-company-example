@@ -6,6 +6,7 @@ import {
   readCompanyPackPreview,
   requestRestart,
 } from './market-actions.ts'
+import { RecommendedPluginCard } from './RecommendedPluginCard.tsx'
 
 type InstallState =
   | { readonly status: 'idle' }
@@ -70,53 +71,51 @@ export function CompanyEnterprisePage({
   const busy = install.status === 'busy'
 
   return (
-    <div className="dshCompanyRoot dshCompanyExamplePage" aria-label={t('enterpriseTitle')}>
+    <div className="dshCompanyContent" aria-label={t('enterpriseTitle')}>
       <div className="dshCompanySection">
-        <h2>{t('companyPackTitle')}</h2>
-        <p>{t('companyPackBody')}</p>
-        <article className="dshCompanyCard">
-          <h3>{COMPANY_PACK_RECOMMENDED_ENTRY.displayName}</h3>
-          <p>{t('pluginCompanyPack')}</p>
-          <div className="dshCompanyMeta">
-            <span>{t('pluginPackage')}</span>
-            <code className="dshCompanyCode">{COMPANY_PACK_RECOMMENDED_ENTRY.packageName}</code>
-            <a href={COMPANY_PACK_RECOMMENDED_ENTRY.repositoryUrl} target="_blank" rel="noreferrer">{t('openRepository')}</a>
+        <div className="dshCompanySectionHead">
+          <div>
+            <h2>{t('companyPackTitle')}</h2>
+            <p>{t('companyPackBody')}</p>
           </div>
-          <div className="dshCompanyActions">
-            <button
-              type="button"
-              className="dshCompanyButton"
-              disabled={busy || companyPackEnabled}
-              onClick={beginCompanyPackConfirm}
-            >
-              {companyPackEnabled ? t('installed') : t('installCompanyPack')}
-            </button>
-          </div>
-        </article>
+        </div>
+        <div className="dshCompanyGrid">
+          <RecommendedPluginCard
+            plugin={COMPANY_PACK_RECOMMENDED_ENTRY}
+            t={t}
+            installed={companyPackEnabled}
+            busy={busy}
+            onInstall={() => beginCompanyPackConfirm()}
+            sourceLabel={t('sourceEnterprise')}
+          />
+        </div>
         {companyPackEnabled
-          ? <p className="dshCompanyStatus" data-tone="ok">{t('companyPackRecommendationsHint')}</p>
+          ? <div className="dshCompanyBanner" data-tone="ok">{t('companyPackRecommendationsHint')}</div>
           : null}
         {install.status === 'confirm-company-pack'
           ? (
               <div className="dshCompanySection" role="dialog" aria-label={t('confirmCompanyPackTitle')}>
-                <h2>{t('confirmCompanyPackTitle')}</h2>
-                <p>{t('confirmCompanyPackBody')}</p>
-                <ul>
-                  {install.entries.map(entry => (
-                    <li key={`${entry.kind}:${entry.packageName}`}>
-                      <code className="dshCompanyCode">{entry.packageName}</code>
-                      {' '}
-                      —
-                      {' '}
-                      {entry.displayName}
-                      {' '}
-                      (
-                      {entry.kind}
-                      )
-                    </li>
-                  ))}
-                </ul>
-                <div className="dshCompanyActions">
+                <div className="dshCompanySectionHead">
+                  <div>
+                    <h2>{t('confirmCompanyPackTitle')}</h2>
+                    <p>{t('confirmCompanyPackBody')}</p>
+                  </div>
+                </div>
+                <div className="dshCompanyBanner">
+                  <ul className="dshCompanyFacts">
+                    {install.entries.map(entry => (
+                      <li key={`${entry.kind}:${entry.packageName}`}>
+                        <code>{entry.packageName}</code>
+                        {' — '}
+                        {entry.displayName}
+                        {' ('}
+                        {entry.kind}
+                        {')'}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="dshCompanyToolbar">
                   <button type="button" className="dshCompanyButton" onClick={confirmCompanyPack}>
                     {t('confirmCompanyPack')}
                   </button>
@@ -132,19 +131,17 @@ export function CompanyEnterprisePage({
             )
           : null}
       </div>
-      {install.status === 'busy' ? <p className="dshCompanyStatus">{t('installBusy')}</p> : null}
+      {install.status === 'busy' ? <div className="dshCompanyBanner">{t('installBusy')}</div> : null}
       {install.status === 'done'
         ? (
-            <div className="dshCompanySection">
-              <p className="dshCompanyStatus" data-tone={install.tone}>{t(install.message)}</p>
+            <div className="dshCompanyBanner" data-tone={install.tone}>
+              <span>{t(install.message)}</span>
               {install.restartToken === undefined
                 ? null
                 : (
-                    <div className="dshCompanyActions">
-                      <button type="button" className="dshCompanyButton" onClick={restartNow}>
-                        {t('installRestartNow')}
-                      </button>
-                    </div>
+                    <button type="button" className="dshCompanyButton" onClick={restartNow}>
+                      {t('installRestartNow')}
+                    </button>
                   )}
             </div>
           )
