@@ -60,13 +60,41 @@ export const OFFICE_IM_RECOMMENDED_PLUGINS: readonly RecommendedPlugin[] = Objec
   },
 ])
 
-/** Optional Company Pack entry shown under Enterprise. */
+/** Optional Company Pack umbrella shown under Enterprise (install via Plugin market). */
 export const COMPANY_PACK_RECOMMENDED_ENTRY: RecommendedPlugin = Object.freeze({
   packageName: 'dsh-plugin-company-pack',
   displayName: 'Company Pack (example)',
   role: 'company-pack',
-  repositoryUrl: 'https://github.com/hopefullstack-collab/deepseek-harness-desktop/tree/master/dsh-plugin-company-pack',
+  repositoryUrl: 'https://github.com/hopefullstack-collab/dsh-plugin-company-example#optional-company-pack',
 })
+
+/** Rows shown in the Enterprise confirm dialog (informational; installs go through Plugin market). */
+export interface CompanyPackConfirmEntry {
+  readonly packageName: string
+  readonly displayName: string
+  readonly kind: 'pack' | 'company-child' | 'community'
+}
+
+/** Build the confirm dialog list without a desktop-specific preview API. */
+export function buildCompanyPackConfirmEntries(): readonly CompanyPackConfirmEntry[] {
+  return Object.freeze([
+    {
+      packageName: COMPANY_PACK_RECOMMENDED_ENTRY.packageName,
+      displayName: COMPANY_PACK_RECOMMENDED_ENTRY.displayName,
+      kind: 'pack',
+    },
+    {
+      packageName: 'dsh-plugin-company-example',
+      displayName: 'Example Company',
+      kind: 'company-child',
+    },
+    ...WORKSPACE_RECOMMENDED_PLUGINS.map(plugin => ({
+      packageName: plugin.packageName,
+      displayName: plugin.displayName,
+      kind: 'community' as const,
+    })),
+  ])
+}
 
 export type InstallKind = 'workspace' | 'office-im' | 'later' | 'company-pack'
 
