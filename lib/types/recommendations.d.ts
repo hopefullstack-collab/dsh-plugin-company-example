@@ -15,8 +15,16 @@ export declare const WORKSPACE_RECOMMENDED_PLUGINS: readonly RecommendedPlugin[]
 export declare const LATER_RECOMMENDED_PLUGINS: readonly RecommendedPlugin[];
 /** Starting office-IM recommendations (not an allowlist). */
 export declare const OFFICE_IM_RECOMMENDED_PLUGINS: readonly RecommendedPlugin[];
-/** Optional Company Pack entry shown under Enterprise. */
+/** Optional Company Pack umbrella shown under Enterprise (install via Plugin market). */
 export declare const COMPANY_PACK_RECOMMENDED_ENTRY: RecommendedPlugin;
+/** Rows shown in the Enterprise confirm dialog (informational; installs go through Plugin market). */
+export interface CompanyPackConfirmEntry {
+    readonly packageName: string;
+    readonly displayName: string;
+    readonly kind: 'pack' | 'company-child' | 'community';
+}
+/** Build the confirm dialog list without a desktop-specific preview API. */
+export declare function buildCompanyPackConfirmEntries(): readonly CompanyPackConfirmEntry[];
 export type InstallKind = 'workspace' | 'office-im' | 'later' | 'company-pack';
 export declare function recommendedPluginsFor(kind: InstallKind): readonly RecommendedPlugin[];
 export declare function isRecommendedPackage(packageName: string): boolean;
