@@ -1,6 +1,6 @@
 {
   "name": "dsh-plugin-company-example",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Example company DSH plugin: identity/SSO extension point and Settings hub (Built-in / Enterprise / Featured)",
   "license": "MIT",
   "publishConfig": {
