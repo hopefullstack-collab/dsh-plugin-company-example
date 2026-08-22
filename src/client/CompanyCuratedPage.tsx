@@ -7,6 +7,7 @@ import {
   recommendedPluginsFor,
   summarizeInstallResults,
   type InstallKind,
+  type RecommendedPlugin,
 } from '../recommendations.ts'
 import type { CompanyLocaleKey } from './locales.ts'
 import {
@@ -29,6 +30,60 @@ type InstallState =
   | { readonly status: 'idle' }
   | { readonly status: 'busy' }
   | { readonly status: 'done'; readonly tone: 'ok' | 'error'; readonly message: CompanyLocaleKey; readonly restartToken?: string }
+
+function PluginSection({
+  title,
+  body,
+  actionLabel,
+  actionDisabled,
+  onAction,
+  plugins,
+  t,
+  isInstalled,
+  busy,
+  onInstall,
+}: {
+  readonly title: string
+  readonly body: string
+  readonly actionLabel: string
+  readonly actionDisabled: boolean
+  readonly onAction: () => void
+  readonly plugins: readonly RecommendedPlugin[]
+  readonly t: (key: CompanyLocaleKey) => string
+  readonly isInstalled: (packageName: string) => boolean
+  readonly busy: boolean
+  readonly onInstall: (packageName: string) => void
+}): ReactNode {
+  return (
+    <div className="dshCompanySection">
+      <div className="dshCompanySectionHead">
+        <div>
+          <h2>{title}</h2>
+          <p>{body}</p>
+        </div>
+      </div>
+      <div className="dshCompanyToolbar">
+        <button type="button" className="dshCompanyButton" disabled={actionDisabled} onClick={onAction}>
+          {actionLabel}
+        </button>
+        <span className="dshCompanyPill dshCompanyPillStatic">{plugins.length}</span>
+      </div>
+      <div className="dshCompanyGrid">
+        {plugins.map(plugin => (
+          <RecommendedPluginCard
+            key={plugin.packageName}
+            plugin={plugin}
+            t={t}
+            installed={isInstalled(plugin.packageName)}
+            busy={busy}
+            onInstall={onInstall}
+            sourceLabel={t('sourceFeatured')}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
 
 export function CompanyCuratedPage({
   t,
@@ -105,100 +160,66 @@ export function CompanyCuratedPage({
   const isInstalled = (packageName: string): boolean => installedNames.includes(packageName)
 
   return (
-    <div className="dshCompanyRoot dshCompanyExamplePage" aria-label={t('curatedTitle')}>
-      <div className="dshCompanySection">
-        <h2>{t('pluginsTitle')}</h2>
-        <p>{t('pluginsBody')}</p>
-        <div className="dshCompanyActions">
-          <button
-            type="button"
-            className="dshCompanyButton"
-            disabled={busy || WORKSPACE_RECOMMENDED_PLUGINS.every(plugin => isInstalled(plugin.packageName))}
-            onClick={() => installKind('company-pack')}
-          >
-            {t('installWorkspace')}
-          </button>
-        </div>
-        {WORKSPACE_RECOMMENDED_PLUGINS.map(plugin => (
-          <RecommendedPluginCard
-            key={plugin.packageName}
-            plugin={plugin}
-            t={t}
-            installed={isInstalled(plugin.packageName)}
-            busy={busy}
-            onInstall={packageName => runInstall([packageName])}
-          />
-        ))}
-      </div>
-      <div className="dshCompanySection">
-        <h2>{t('laterTitle')}</h2>
-        <p>{t('laterBody')}</p>
-        <div className="dshCompanyActions">
-          <button
-            type="button"
-            className="dshCompanyButton dshCompanyButtonSecondary"
-            disabled={busy || LATER_RECOMMENDED_PLUGINS.every(plugin => isInstalled(plugin.packageName))}
-            onClick={() => installKind('later')}
-          >
-            {t('installLater')}
-          </button>
-        </div>
-        {LATER_RECOMMENDED_PLUGINS.map(plugin => (
-          <RecommendedPluginCard
-            key={plugin.packageName}
-            plugin={plugin}
-            t={t}
-            installed={isInstalled(plugin.packageName)}
-            busy={busy}
-            onInstall={packageName => runInstall([packageName])}
-          />
-        ))}
-      </div>
-      <div className="dshCompanySection">
-        <h2>{t('officeImTitle')}</h2>
-        <p>{t('officeImBody')}</p>
-        <div className="dshCompanyActions">
-          <button
-            type="button"
-            className="dshCompanyButton"
-            disabled={busy || OFFICE_IM_RECOMMENDED_PLUGINS.every(plugin => isInstalled(plugin.packageName))}
-            onClick={() => installKind('office-im')}
-          >
-            {t('installOfficeIm')}
-          </button>
-        </div>
-        {OFFICE_IM_RECOMMENDED_PLUGINS.map(plugin => (
-          <RecommendedPluginCard
-            key={plugin.packageName}
-            plugin={plugin}
-            t={t}
-            installed={isInstalled(plugin.packageName)}
-            busy={busy}
-            onInstall={packageName => runInstall([packageName])}
-          />
-        ))}
-      </div>
-      {install.status === 'busy' ? <p className="dshCompanyStatus">{t('installBusy')}</p> : null}
+    <div className="dshCompanyContent" aria-label={t('curatedTitle')}>
+      <PluginSection
+        title={t('pluginsTitle')}
+        body={t('pluginsBody')}
+        actionLabel={t('installWorkspace')}
+        actionDisabled={busy || WORKSPACE_RECOMMENDED_PLUGINS.every(plugin => isInstalled(plugin.packageName))}
+        onAction={() => installKind('company-pack')}
+        plugins={WORKSPACE_RECOMMENDED_PLUGINS}
+        t={t}
+        isInstalled={isInstalled}
+        busy={busy}
+        onInstall={packageName => runInstall([packageName])}
+      />
+      <PluginSection
+        title={t('laterTitle')}
+        body={t('laterBody')}
+        actionLabel={t('installLater')}
+        actionDisabled={busy || LATER_RECOMMENDED_PLUGINS.every(plugin => isInstalled(plugin.packageName))}
+        onAction={() => installKind('later')}
+        plugins={LATER_RECOMMENDED_PLUGINS}
+        t={t}
+        isInstalled={isInstalled}
+        busy={busy}
+        onInstall={packageName => runInstall([packageName])}
+      />
+      <PluginSection
+        title={t('officeImTitle')}
+        body={t('officeImBody')}
+        actionLabel={t('installOfficeIm')}
+        actionDisabled={busy || OFFICE_IM_RECOMMENDED_PLUGINS.every(plugin => isInstalled(plugin.packageName))}
+        onAction={() => installKind('office-im')}
+        plugins={OFFICE_IM_RECOMMENDED_PLUGINS}
+        t={t}
+        isInstalled={isInstalled}
+        busy={busy}
+        onInstall={packageName => runInstall([packageName])}
+      />
+      {install.status === 'busy' ? <div className="dshCompanyBanner">{t('installBusy')}</div> : null}
       {install.status === 'done'
         ? (
-            <div className="dshCompanySection">
-              <p className="dshCompanyStatus" data-tone={install.tone}>{t(install.message)}</p>
+            <div className="dshCompanyBanner" data-tone={install.tone}>
+              <span>{t(install.message)}</span>
               {install.restartToken === undefined
                 ? null
                 : (
-                    <div className="dshCompanyActions">
-                      <button type="button" className="dshCompanyButton" onClick={restartNow}>
-                        {t('installRestartNow')}
-                      </button>
-                    </div>
+                    <button type="button" className="dshCompanyButton" onClick={restartNow}>
+                      {t('installRestartNow')}
+                    </button>
                   )}
             </div>
           )
         : null}
       <div className="dshCompanySection">
-        <h2>{t('catalogTitle')}</h2>
-        <p>{t('catalogBody')}</p>
-        <div className="dshCompanyActions">
+        <div className="dshCompanySectionHead">
+          <div>
+            <h2>{t('catalogTitle')}</h2>
+            <p>{t('catalogBody')}</p>
+          </div>
+        </div>
+        <div className="dshCompanyToolbar">
           <button
             type="button"
             className="dshCompanyButton"
@@ -208,16 +229,13 @@ export function CompanyCuratedPage({
             {t('addCatalog')}
           </button>
         </div>
-        {catalog.status === 'busy' ? <p className="dshCompanyStatus">{t('catalogBusy')}</p> : null}
-        {catalog.status === 'error' ? <p className="dshCompanyStatus" data-tone="error">{t('catalogError')}</p> : null}
+        {catalog.status === 'busy' ? <div className="dshCompanyBanner">{t('catalogBusy')}</div> : null}
+        {catalog.status === 'error' ? <div className="dshCompanyBanner" data-tone="error">{t('catalogError')}</div> : null}
         {catalog.status === 'ready' && catalog.selected
           ? (
-              <>
-                <p className="dshCompanyStatus" data-tone="ok">{t('catalogReady')}</p>
-                {catalog.usedFallback
-                  ? <p className="dshCompanyStatus">{t('catalogUsingFallback')}</p>
-                  : null}
-              </>
+              <div className="dshCompanyBanner" data-tone="ok">
+                {catalog.usedFallback ? t('catalogUsingFallback') : t('catalogReady')}
+              </div>
             )
           : null}
       </div>
