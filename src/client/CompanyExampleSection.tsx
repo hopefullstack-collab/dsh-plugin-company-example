@@ -6,7 +6,7 @@ import { CompanyCuratedPage } from './CompanyCuratedPage.tsx'
 import { CompanyEnterprisePage } from './CompanyEnterprisePage.tsx'
 
 const PACKAGE_NAME = 'dsh-plugin-company-example'
-const PACKAGE_VERSION = '0.1.1'
+const PACKAGE_VERSION = '0.2.0'
 
 type CompanyExamplePage = 'builtin' | 'enterprise' | 'curated'
 

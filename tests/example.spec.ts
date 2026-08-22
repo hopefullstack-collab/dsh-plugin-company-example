@@ -9,6 +9,7 @@ import {
 import { EXAMPLE_COMPANY_IDENTITY, name } from '../src/index.ts'
 import {
   WORKSPACE_RECOMMENDED_PLUGINS,
+  buildCompanyPackConfirmEntries,
   isRecommendedPackage,
   recommendedPluginsFor,
   summarizeInstallResults,
@@ -49,6 +50,15 @@ describe('company example plugin', () => {
       { sourceRecordId: 'fallback', enabled: true, builtInProviderKey: 'dsh-1024store' },
       { sourceRecordId: 'company', enabled: true, builtInProviderKey: 'company-1024store' },
     ])?.sourceRecordId).toBe('company')
+  })
+
+  it('builds a static Enterprise confirm list without desktop preview APIs', () => {
+    const entries = buildCompanyPackConfirmEntries()
+    expect(entries[0]?.packageName).toBe('dsh-plugin-company-pack')
+    expect(entries.some(entry => entry.packageName === 'dsh-plugin-company-example')).toBe(true)
+    expect(entries.filter(entry => entry.kind === 'community').map(entry => entry.packageName)).toEqual(
+      WORKSPACE_RECOMMENDED_PLUGINS.map(plugin => plugin.packageName),
+    )
   })
 
   it('curates workspace recommendations without making them a silent boot list', () => {
