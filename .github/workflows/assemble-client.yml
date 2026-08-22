@@ -13,12 +13,11 @@ jobs:
         run: |
           set -euo pipefail
           cat lib/client.part.00.js lib/client.part.01.js lib/client.part.02.js lib/client.part.03.js lib/client.part.04.js lib/client.part.05.js lib/client.part.06.js lib/client.part.07.js lib/client.part.08.js lib/client.part.09.js lib/client.part.10.js lib/client.part.11.js lib/client.part.12.js lib/client.part.13.js > lib/client.js
-          test "$(wc -c < lib/client.js)" -eq 47472
-          if compgen -G 'lib/client.js.map.b64.*' > /dev/null; then
-            cat lib/client.js.map.b64.00 lib/client.js.map.b64.01 lib/client.js.map.b64.02 lib/client.js.map.b64.03 lib/client.js.map.b64.04 lib/client.js.map.b64.05 > /tmp/client.map.b64
-            base64 -d /tmp/client.map.b64 | gzip -d > lib/client.js.map
-            test "$(wc -c < lib/client.js.map)" -eq 70798
-          fi
+          test "$(wc -c < lib/client.js)" -eq 51546
+          cat lib/client.js.map.b64.00 lib/client.js.map.b64.01 lib/client.js.map.b64.02 > /tmp/client.map.b64
+          base64 -d /tmp/client.map.b64 | gzip -d > lib/client.js.map
+          test "$(wc -c < lib/client.js.map)" -eq 77018
+          rg -q dshCompanyGrid lib/client.js
       - name: Commit if changed
         run: |
           git config user.name "github-actions[bot]"
