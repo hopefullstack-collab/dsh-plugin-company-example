@@ -1,5 +1,6 @@
 /**
- * Market + Company Pack HTTP helpers used by the company Settings hub.
+ * Plugin market HTTP helpers for the Example Company Settings hub.
+ * Works on standard DSH Desktop with dsh-community-market composed into the profile.
  * Catalog selection prefers company-1024store, then falls back to dsh-1024store.
  */
 import { companyCatalogSelected, type CatalogSourceView } from '../catalog.ts';
@@ -27,23 +28,7 @@ export declare function installRecommendedPlugins(packageNames: readonly string[
     readonly restartToken?: string;
 }>;
 export declare function requestRestart(restartToken: string, signal?: AbortSignal): Promise<void>;
-export interface CompanyPackPreview {
-    readonly enabled: boolean;
-    readonly packageName: string;
-    readonly displayName: string;
-    readonly plan: {
-        readonly entries: readonly {
-            readonly packageName: string;
-            readonly displayName: string;
-            readonly kind: 'pack' | 'company-child' | 'community';
-        }[];
-    };
-}
-export declare function readCompanyPackPreview(signal?: AbortSignal): Promise<CompanyPackPreview>;
-export declare function confirmCompanyPackInstall(signal?: AbortSignal): Promise<{
-    readonly ok: true;
-    readonly packEnabled: boolean;
-}>;
+/** Install the optional Company Pack through Plugin market (no desktop-specific API). */
 export declare function installCompanyPackWithCascade(signal?: AbortSignal): Promise<{
     readonly packEnabled: boolean;
     readonly results: readonly InstallResult[];

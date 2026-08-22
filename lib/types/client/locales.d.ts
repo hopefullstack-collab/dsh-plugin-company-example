@@ -13,11 +13,11 @@ export declare const zh: {
     readonly ssoIdle: "空闲（未连接）";
     readonly enterpriseTitle: "企业内部";
     readonly companyPackTitle: "可选公司套件";
-    readonly companyPackBody: "公司套件随应用打包但不默认启用，也不会开机自动装。确认后会启用套件与公司子插件，并可级联安装推荐社区插件。继续安装请到同页「精选推荐」。不要把密钥写进包里。";
+    readonly companyPackBody: "可选公司套件通过插件市场安装，不会开机自动装。确认后仅安装套件包本身；工作区与办公 IM 推荐请到同页「精选推荐」。不要把密钥写进包里。";
     readonly pluginCompanyPack: "可选公司套件：示例公司子插件与推荐社区插件。仅在确认后安装。";
     readonly installCompanyPack: "安装公司套件…";
     readonly confirmCompanyPackTitle: "确认安装公司套件";
-    readonly confirmCompanyPackBody: "将启用公司套件与公司子插件，并安装下列推荐社区插件。不会开机自动装。";
+    readonly confirmCompanyPackBody: "将通过插件市场安装公司套件包。下列子插件与社区推荐为说明用途；继续安装请到「精选推荐」。不会开机自动装。";
     readonly confirmCompanyPack: "确认安装";
     readonly cancelCompanyPack: "取消";
     readonly companyPackRecommendationsHint: "套件已启用。工作区 / 办公 IM / 窄屏推荐在同页「精选推荐」。";
@@ -44,7 +44,7 @@ export declare const zh: {
     readonly installing: "正在安装…";
     readonly installed: "已安装";
     readonly installBusy: "正在通过插件市场安装推荐包…";
-    readonly installRestart: "已写入当前 profile。重启 AI Buddy 后下次启动会加载。";
+    readonly installRestart: "已写入当前 profile。重启 DSH Desktop 后下次启动会加载。";
     readonly installRestartNow: "立即重启";
     readonly installPartial: "部分插件已安装。重启后加载成功的项；找不到的请到插件市场搜索，或用 dsh plugin add。";
     readonly installMissing: "目录里找不到这个包。请到插件市场搜索，或用 dsh plugin add。";
@@ -72,11 +72,11 @@ export declare const en: {
     readonly ssoIdle: "Idle (not connected)";
     readonly enterpriseTitle: "Enterprise";
     readonly companyPackTitle: "Optional Company Pack";
-    readonly companyPackBody: "The Company Pack ships in the app graph but is not enabled by default and never silent-preinstalls at launch. Confirming enables the pack and company children, and may cascade recommended community plugins. Continue installs under Featured on the same page. Do not put secrets in the package.";
+    readonly companyPackBody: "The optional Company Pack installs through Plugin market and never silent-preinstalls at launch. Confirming installs only the pack package; continue workspace and office picks under Featured on this page. Do not put secrets in the package.";
     readonly pluginCompanyPack: "Optional Company Pack: example company child plus recommended community plugins. Install only after confirm.";
     readonly installCompanyPack: "Install Company Pack…";
     readonly confirmCompanyPackTitle: "Confirm Company Pack install";
-    readonly confirmCompanyPackBody: "This enables the Company Pack and company children, then installs the community recommendations below. Nothing installs at launch.";
+    readonly confirmCompanyPackBody: "This installs the Company Pack through Plugin market. Child and community rows below are informational; continue installs under Featured. Nothing installs at launch.";
     readonly confirmCompanyPack: "Confirm install";
     readonly cancelCompanyPack: "Cancel";
     readonly companyPackRecommendationsHint: "Pack enabled. Workspace / office IM / narrow-screen recommendations are under Featured on this page.";
@@ -103,7 +103,7 @@ export declare const en: {
     readonly installing: "Installing…";
     readonly installed: "Installed";
     readonly installBusy: "Installing recommended packages through Plugin market…";
-    readonly installRestart: "Wrote the current profile. Restart AI Buddy so they load on the next startup.";
+    readonly installRestart: "Wrote the current profile. Restart DSH Desktop so they load on the next startup.";
     readonly installRestartNow: "Restart now";
     readonly installPartial: "Some plugins installed. Restart to load the ones that succeeded. Search Plugin market or use dsh plugin add for anything the catalog missed.";
     readonly installMissing: "This package is not in the catalog. Search Plugin market or use dsh plugin add.";
